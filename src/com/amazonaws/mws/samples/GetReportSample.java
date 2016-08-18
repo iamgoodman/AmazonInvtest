@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,6 +58,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URLEncoder;
@@ -106,7 +108,6 @@ public class GetReportSample {
 
     	final String accessKeyId = "0";
         final String secretAccessKey = "0";
-
         final String appName = "Myawesomeapp";
         final String appVersion = "1.1.0";
 
@@ -161,13 +162,13 @@ public class GetReportSample {
          * Marketplace Web Service calls.
          ***********************************************************************/
 
-        	final String merchantId = "0";
-           final String sellerDevAuthToken = "0";
+        final String merchantId = "0";
+        final String sellerDevAuthToken = "0";
 
         GetReportRequest request = new GetReportRequest();
         request.setMerchant( merchantId );
         request.setMWSAuthToken(sellerDevAuthToken);
-
+//please be aware 2615142646017030 this report returns listing with qty=0, unncessary, greatly reduced speed of updating, will remove later. 
         request.setReportId( "2615142646017030" );
 
         // Note that depending on the type of report being downloaded, a report can reach 
@@ -185,107 +186,62 @@ public class GetReportSample {
          request.setReportOutputStream( report );
           
         invokeGetReport(service, request);
-       
-        
-        
-        
-        //use OpenCSV to parse tab delimited listing report, save the parsed value to amazon lisiting object write it to db
-        
-/*        //each line of value is being seperated by a new line seperator
-        CSVReader reader = new CSVReader(new FileReader("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"),'\n');*/
-        
-    /*    //seperate each line by new line seperator, and skip the first one as the first line, as it is all the attributes name
-        CSVReader reader = new CSVReader(new FileReader("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"),'\n','\'',1);*/
-        
-   
-        
-        //string array of each segement of sentence  in the file that are already being seperated by the line seperator next line
-       String[] record;
+
       
-       //save the seperated string to write to db
-       String[]vdb;
-       String value = "";
-       ArrayList<String>tracker = new ArrayList<String>();
-       int count =0;
-       
-       
-       //trying java util scanner to read the file
-       
-       java.util.Scanner scanner = new java.util.Scanner(new File("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"));
-       
-       
-       scanner.useDelimiter("\n");
+    //initialize DB connection
+        
+        String url = "0";
+        String username = "0";
+        String password = "0";
+
+        
+        System.out.println("Loading driver...");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            System.out.println("Driver loaded!");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot find the driver in the classpath!", e);
+        }
+        
+        
+        
+        System.out.println("Connecting database...");
       
- 
-       while (scanner.hasNextLine()) {
-    	  
-    	  
-    	   count ++;
-          String line = scanner.nextLine();
-          /* String cells[] = line.split("\t");     */                     
+
+ //string array to store each line of file, seperated by tab
+        String[] vdb;
+        
        
-   /*       System.out.println(line);*/
+       //used buff reader, succeeded
+       
+       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt")));
+       
+       br.readLine(); // this will read the first line, we want to skip the first line, without this will start from first line
+       
+       String line=null;
+    
+       
+       int i=0;
+       
+       //loop second line in the file as the first line is title only 
+       while((line = br.readLine())!= null){ 
     	   
-    	   System.out.println("current count is " + "" +count);
-    	  
-       }
-       
-       
-       
-       
-       System.out.println(count);
-       scanner.close();
-       
-     /*   try {
-        	
-        	//write to db with assigned attributes
-    		
-  		
-   		 
-    		String url = "0";
-            String username = "0";
-            String password = "0";
-            
-            System.out.println("Loading driver...");
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                System.out.println("Driver loaded!");
-            } catch (ClassNotFoundException e) {
-                throw new IllegalStateException("Cannot find the driver in the classpath!", e);
-            }
-            
-            
-            
-            System.out.println("Connecting database...");
-        	
-        	
-        	//reac each line of record 
-			while ((record = reader.readNext()) != null) {
-			
-				//initializ object
-				AmazonListing al = new AmazonListing(value,value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value);
-				//information for one listing  is sotred at index 0 only
-				
-				
-				count++;
-				
-				   //split the information 
-				  vdb = value.split("\t");
-				 
-				  
-				 for(int i = 0; i<vdb.length;i++)
-				 {
-					 
-					 System.out.println(vdb[i]);
-					 System.out.println("next iteration");
-				 }
-				  
-	 
-				 //28 attributes in total assign each attributes to Amazon Listing object to write to db
-				 
-			 
-			try{
-			
+           
+             
+             
+          //store each setence   
+          vdb = line.split("\t");
+             
+             
+             
+           //initialize obj to store splited setnece to each varaible 
+          AmazonListing al = new AmazonListing(line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line, line);
+             
+             
+             
+             
+          try{
+  			
 				
 				al.setItemname(vdb[0]);
 				
@@ -619,144 +575,94 @@ public class GetReportSample {
 			
 		
 		
+		//write to db
 		
-        //write to db
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-        	
-        	
-            System.out.println("Database connected!");
-            
-            
-            
-            //insert primary Key SKU  to DB, should have used insert for all statement, will combine later
+		
+		 try (Connection connection = DriverManager.getConnection(url, username, password)) {
+	        	
+	        	
+	            System.out.println("Database connected!");
+	            
+	            
+	            
+	            //insert to db
+	            
+	            
+	            String query =  "INSERT INTO AmazonListing(SKU, ASIN, ProductID, ListingID,"
+	            		+ "ItemName,ItemDescription,AmazonPrice,Quantity,ListingOpenDate,"
+	            		+ "IsItemMarketPlace,ProductIdType,	"
+	            		+ "ItemNote,ItemCondition,PendingQuantity,"
+	            		+ "ShipInternational,ExpeditedShipping,FulfillmentChannel,MerchantShippingGroup) " +
+	            		"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-            
-                String query = " insert into AmazonListing (SKU)"
-                        + " values (?)";
-                
-                
-                PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
-                preparedStmt.setString (1, URLEncoder.encode(al.getSku(),"UTF-8"));
-                
-             // execute the preparedstatement
-                preparedStmt.execute();
-                System.out.println("inserted");
-           
-           	
-            
-            // Update DB
-            String query1 = "UPDATE AmazonListing SET ItemName = ?, ItemDescription = ?, ListingID = ?, AmazonPrice = ?, Quantity = ?, ListingOpenDate = ?, "
-            		+ "IsItemMarketPlace = ?, ProductId = ?, ItemNote = ?, ItemCondition = ?, ASIN = ?, "
-            		+ "ShipInternational = ?, ExpeditedShipping = ?, PendingQuantity = ?,"
-            		+ "FulfillmentChannel = ?,MerchantShippingGroup = ?, ProductIdType = ? "
-            		
-            		+ " WHERE SKU = ?";
+		
+             
+	            PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
+	            
+	            preparedStmt.setString (1, URLEncoder.encode(al.getSku(),"UTF-8"));
+	            
+	            preparedStmt.setString(2,URLEncoder.encode(al.getAsin(),"UTF-8"));
+	            
+	            preparedStmt.setString(3,URLEncoder.encode(al.getProductid(),"UTF-8"));
+             
+               
+	            preparedStmt.setString(4,URLEncoder.encode(al.getListingid(),"UTF-8"));
+	            
+	            preparedStmt.setString(5,URLEncoder.encode(al.getItemname(), "UTF-8"));
+	            
+	            preparedStmt.setString(6,URLEncoder.encode(al.getItemdescription(),"UTF-8"));
+	            
+	            preparedStmt.setString(7,URLEncoder.encode(al.getAmazonprice(),"UTF-8"));
+	            
+	            preparedStmt.setString(8,URLEncoder.encode(al.getQuantity(),"UTF-8"));
+	            
+	            preparedStmt.setString(9,URLEncoder.encode(al.getListingopendate(),"UTF-8"));
+	            
+	            preparedStmt.setString(10,URLEncoder.encode(al.getIsmarketplace(),"UTF-8"));
+	            
+	            preparedStmt.setString(11,URLEncoder.encode(al.getProductidtype(),"UTF-8"));
+	            
+	            preparedStmt.setString(12,URLEncoder.encode(al.getItemnote(),"UTF-8"));
+	            
+	            preparedStmt.setString(13,URLEncoder.encode(al.getItemcondition(),"UTF-8"));
+	            
+	            preparedStmt.setString(14,URLEncoder.encode(al.getPendingquantity(),"UTF-8"));
+	            
+	            preparedStmt.setString(15,URLEncoder.encode(al.getShipinternational(),"UTF-8"));
+	            
+	            
+	            preparedStmt.setString(16,URLEncoder.encode(al.getExpitidedshipping(),"UTF-8"));
+	            
+	            preparedStmt.setString(17,URLEncoder.encode(al.getFuilfillmentchannel(),"UTF-8"));
+	            
+	            preparedStmt.setString(18,URLEncoder.encode(al.getMerchantshippinggroup(),"UTF-8"));
+	            
+    	   i++;   
+             
+    	   System.out.println(preparedStmt);
+           // execute the preparedstatement
+              preparedStmt.execute();
+              System.out.println("Inserted");
               
-            
-            
-            //create the mysql insert preparedstatement
-            
-            PreparedStatement preparedStmt1 = (PreparedStatement) connection.prepareStatement(query1);
-           
-            //insert values to be updated to statement , need to use encoder to make it more secure and to prevent quotation marks to mess up db
-            
-            preparedStmt1.setString(1,URLEncoder.encode(al.getItemname(), "UTF-8"));
-            
-            preparedStmt1.setString(2,URLEncoder.encode(al.getItemdescription(),"UTF-8"));
-            
-            preparedStmt1.setString(3,URLEncoder.encode(al.getListingid(),"UTF-8"));
-            
-            preparedStmt1.setString(4,URLEncoder.encode(al.getAmazonprice(),"UTF-8"));
-            
-            preparedStmt1.setString(5,URLEncoder.encode(al.getQuantity(),"UTF-8"));
-          
-            preparedStmt1.setString(6,URLEncoder.encode(al.getListingopendate(),"UTF-8"));
-            
-            preparedStmt1.setString(7,URLEncoder.encode(al.getIsmarketplace(),"UTF-8"));
-            
-            preparedStmt1.setString(8,URLEncoder.encode(al.getProductid(),"UTF-8"));
-            
-            preparedStmt1.setString(9,URLEncoder.encode(al.getItemnote(),"UTF-8"));
-            
-            preparedStmt1.setString(10,URLEncoder.encode(al.getItemcondition(),"UTF-8"));
-            
-            preparedStmt1.setString(11,URLEncoder.encode(al.getAsin(),"UTF-8"));
-            
-            preparedStmt1.setString(12,URLEncoder.encode(al.getShipinternational(),"UTF-8"));
-            
-            preparedStmt1.setString(13,URLEncoder.encode(al.getExpitidedshipping(),"UTF-8"));
-            
-          
-            
-            preparedStmt1.setString(14,URLEncoder.encode(al.getPendingquantity(),"UTF-8"));
-            
-            preparedStmt1.setString(15,URLEncoder.encode(al.getFuilfillmentchannel(),"UTF-8"));
-            
-            preparedStmt1.setString(16,URLEncoder.encode(al.getMerchantshippinggroup(),"UTF-8"));
-            
-            preparedStmt1.setString(17,URLEncoder.encode(al.getProductidtype(),"UTF-8"));
-            
-            preparedStmt1.setString(18,URLEncoder.encode(al.getSku(),"UTF-8"));
-            
-            
-            
-            System.out.println(preparedStmt1);
-         // execute the preparedstatement
-            preparedStmt1.execute();
-            System.out.println("Updated");
-            
-            
-            
-            //after inserting, close the connection
-            connection.close();
-            
-        } catch (SQLException e) {
-            throw new IllegalStateException("Cannot connect the database!", e);
-        }
-        
-		
-		
-			    System.out.println("end of line");
-			    
-			}
-			
-			System.out.println(count);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        */
-        
+              
+              
+              //after inserting, close the connection
+              connection.close();
+              
+          } catch (SQLException e) {
+              throw new IllegalStateException("Cannot connect the database!", e);
+          }
+             
+       }
+       System.out.println(i);
+       
+       
+       }
+       
+ 
        
      
-        
-              
 
-              
-              
-
-        }  
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-     
-       
-        
         
  
 
