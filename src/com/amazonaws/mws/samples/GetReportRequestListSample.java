@@ -49,7 +49,7 @@ public class GetReportRequestListSample {
          ***********************************************************************/
     	final String accessKeyId = "0";
         final String secretAccessKey = "0";
-
+ 
         final String appName = "Myawesomeapp";
         final String appVersion = "1.1.0";
 
@@ -126,7 +126,7 @@ public class GetReportRequestListSample {
 	    IdList n = new IdList();
 	    //add reportrequest id
 	    
-	    n.withId("0");
+	    n.withId("246178017030");
         request.setReportRequestIdList(n);
        
         //

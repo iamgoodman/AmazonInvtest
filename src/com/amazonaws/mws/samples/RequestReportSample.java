@@ -55,7 +55,8 @@ public class RequestReportSample {
          * Access Key ID and Secret Access Key ID, obtained from:
          * http://aws.amazon.com
          ***********************************************************************/
-    	final String accessKeyId =  "0";
+
+final String accessKeyId = "0";
         final String secretAccessKey = "0";
  
         final String appName = "Myawesomeapp";

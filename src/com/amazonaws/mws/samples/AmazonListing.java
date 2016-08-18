@@ -23,7 +23,8 @@ public class AmazonListing {
 	String expitidedshipping;
 	String fuilfillmentchannel;
 	String merchantshippinggroup;
-	
+	String opendate;
+	String pendingquantity;
 	
 	
 	
@@ -32,7 +33,7 @@ public class AmazonListing {
 			String itemdescription, String amazonprice, String sellingprice, String quantity, String listingopendate,
 			String imageurl, String ismarketplace, String productidtype, String shopshippingfee, String itemnote,
 			String itemcondition, String shipinternational, String expitidedshipping, String fuilfillmentchannel,
-			String merchantshippinggroup) {
+			String merchantshippinggroup,  String pendingquantity) {
 		super();
 		this.sku = sku;
 		this.asin = asin;
@@ -54,7 +55,26 @@ public class AmazonListing {
 		this.expitidedshipping = expitidedshipping;
 		this.fuilfillmentchannel = fuilfillmentchannel;
 		this.merchantshippinggroup = merchantshippinggroup;
+	
+		this.pendingquantity = pendingquantity;
 	}
+
+
+	
+	
+	public String getPendingquantity() {
+		return pendingquantity;
+	}
+
+
+
+
+
+	public void setPendingquantity(String qty) {
+		this.pendingquantity = qty;
+	}
+	
+	
 
 
 

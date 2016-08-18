@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -70,6 +71,7 @@ import com.amazonaws.mws.model.*;
 
 import com.mysql.jdbc.Driver;
 import com.mysql.jdbc.PreparedStatement;
+import com.sun.java_cup.internal.runtime.Scanner;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -101,8 +103,9 @@ public class GetReportSample {
          * Access Key ID and Secret Access Key ID, obtained from:
          * http://aws.amazon.com
          ***********************************************************************/
-    	final String accessKeyId =  "00";
-        final String secretAccessKey = "00";
+
+    	final String accessKeyId = "0";
+        final String secretAccessKey = "0";
 
         final String appName = "Myawesomeapp";
         final String appVersion = "1.1.0";
@@ -157,14 +160,15 @@ public class GetReportSample {
          * Marketplace and Merchant IDs are required parameters for all 
          * Marketplace Web Service calls.
          ***********************************************************************/
-        final String merchantId = "00";
-        final String sellerDevAuthToken =  "00";
+
+        	final String merchantId = "0";
+           final String sellerDevAuthToken = "0";
 
         GetReportRequest request = new GetReportRequest();
         request.setMerchant( merchantId );
         request.setMWSAuthToken(sellerDevAuthToken);
 
-        request.setReportId( "00" );
+        request.setReportId( "2615142646017030" );
 
         // Note that depending on the type of report being downloaded, a report can reach 
         // sizes greater than 1GB. For this reason we recommend that you _always_ program to
@@ -187,41 +191,543 @@ public class GetReportSample {
         
         //use OpenCSV to parse tab delimited listing report, save the parsed value to amazon lisiting object write it to db
         
-        //each line of value is being seperated by a new line 
+/*        //each line of value is being seperated by a new line seperator
+        CSVReader reader = new CSVReader(new FileReader("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"),'\n');*/
         
-        CSVReader reader = new CSVReader(new FileReader("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"),'\n');
-        System.out.println(reader);
+    /*    //seperate each line by new line seperator, and skip the first one as the first line, as it is all the attributes name
+        CSVReader reader = new CSVReader(new FileReader("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"),'\n','\'',1);*/
         
-        String[] record;
    
-        try {
+        
+        //string array of each segement of sentence  in the file that are already being seperated by the line seperator next line
+       String[] record;
+      
+       //save the seperated string to write to db
+       String[]vdb;
+       String value = "";
+       ArrayList<String>tracker = new ArrayList<String>();
+       int count =0;
+       
+       
+       //trying java util scanner to read the file
+       
+       java.util.Scanner scanner = new java.util.Scanner(new File("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\AllopenListing.txt"));
+       
+       
+       scanner.useDelimiter("\n");
+      
+ 
+       while (scanner.hasNextLine()) {
+    	  
+    	  
+    	   count ++;
+          String line = scanner.nextLine();
+          /* String cells[] = line.split("\t");     */                     
+       
+   /*       System.out.println(line);*/
+    	   
+    	   System.out.println("current count is " + "" +count);
+    	  
+       }
+       
+       
+       
+       
+       System.out.println(count);
+       scanner.close();
+       
+     /*   try {
+        	
+        	//write to db with assigned attributes
+    		
+  		
+   		 
+    		String url = "0";
+            String username = "0";
+            String password = "0";
+            
+            System.out.println("Loading driver...");
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                System.out.println("Driver loaded!");
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException("Cannot find the driver in the classpath!", e);
+            }
+            
+            
+            
+            System.out.println("Connecting database...");
+        	
+        	
         	//reac each line of record 
 			while ((record = reader.readNext()) != null) {
 			
+				//initializ object
+				AmazonListing al = new AmazonListing(value,value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value, value);
+				//information for one listing  is sotred at index 0 only
 				
 				
-			    for (String value : record) {
-			    	
-			    	//string value is a record of entire line
-			    	
-			        System.out.println(value); // Debug only
-	
+				count++;
+				
+				   //split the information 
+				  vdb = value.split("\t");
+				 
+				  
+				 for(int i = 0; i<vdb.length;i++)
+				 {
+					 
+					 System.out.println(vdb[i]);
+					 System.out.println("next iteration");
+				 }
+				  
+	 
+				 //28 attributes in total assign each attributes to Amazon Listing object to write to db
+				 
 			 
-			        
-
-			 
-			        
-			    }
-			    
-			    
-			    System.out.println("end of line");
+			try{
+			
+				
+				al.setItemname(vdb[0]);
+				
+				System.out.println(al.getItemname());
+			
 			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setItemname("");
+				
+			}
+			
+			
+			
+			
+			try{
+				
+				
+				al.setItemdescription(vdb[1]);
+				
+			System.out.println(al.getItemdescription());
+				
+				
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setItemdescription("");
+				
+			}
+			
+			
+			
+			
+			
+			try{
+				
+				
+				al.setListingid(vdb[2]);
+				
+				System.out.println(al.getListingid());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setListingid("");
+				
+			}
+			
+			
+			
+			
+			try{
+				
+				
+				al.setSku(vdb[3]);
+				
+				System.out.println(al.getSku());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setSku("");
+				
+			}
+			
+			
+			
+			try{
+				
+				
+				al.setAmazonprice(vdb[4]);
+				
+				System.out.println(al.getAmazonprice());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setAmazonprice("");
+				
+			}
+				 
+				 
+			
+		
+			try{
+					
+					
+					al.setQuantity(vdb[5]);
+					
+					System.out.println(al.getQuantity());
+				
+				}
+				catch(NullPointerException e)
+				{
+					
+					
+					al.setQuantity("");
+					
+				}	 
+				 
+				 
+			
+
+			try{
+					
+					
+					al.setListingopendate(vdb[6]);
+					
+					System.out.println(al.getListingopendate());
+				
+				}
+				catch(NullPointerException e)
+				{
+					
+					
+					al.setListingopendate("");
+					
+				}	 
+				 
+			
+			
+			try{
+				
+				
+				al.setIsmarketplace(vdb[8]);
+				
+				System.out.println(al.getIsmarketplace());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setIsmarketplace("");
+				
+			}	 
+			
+				 
+	
+			
+			try{
+				
+				
+				al.setProductidtype(vdb[9]);
+				
+				System.out.println(al.getProductidtype());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setProductidtype("");
+				
+			}	 	 
+				 
+			
+			
+			
+			
+			
+			try{
+				
+				
+				al.setItemnote(vdb[11]);
+				
+				System.out.println(al.getItemnote());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setItemnote("");
+				
+			}	 	
+				
+			
+
+			try{
+				
+				
+				al.setItemcondition(vdb[12]);
+				
+				System.out.println(al.getItemcondition());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setItemcondition("");
+				
+			}	 	
+			
+			
+			
+			try{
+				
+				
+				al.setAsin(vdb[16]);
+				
+				System.out.println(al.getAsin());
+			
+				
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setAsin("");
+				
+			}	 	
+				 
+			
+			try{
+				
+				
+				al.setShipinternational(vdb[19]);
+				
+				System.out.println(al.getShipinternational());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setShipinternational("");
+				
+			}	 	
+				 
+			
+			try{
+				
+				
+				al.setExpitidedshipping(vdb[20]);
+				
+				System.out.println(al.getExpitidedshipping());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setExpitidedshipping("");
+				
+			}	 
+			
+			
+
+			try{
+				
+				
+				al.setProductid(vdb[22]);
+				
+				System.out.println(al.getProductid());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setProductid("");
+				
+			}	 
+			
+			
+			try{
+				
+				
+				al.setPendingquantity(vdb[25]);
+				
+				System.out.println(al.getPendingquantity());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setPendingquantity("");
+				
+			}	 
+		
+
+			
+			
+		try{
+				
+				
+				al.setFuilfillmentchannel(vdb[26]);
+				
+				System.out.println(al.getFuilfillmentchannel());
+			
+			}
+			catch(NullPointerException e)
+			{
+				
+				
+				al.setFuilfillmentchannel("");
+				
+			}	 
+		
+		
+		
+		try{
+			
+			
+			al.setMerchantshippinggroup(vdb[27]);
+			
+			System.out.println(al.getMerchantshippinggroup());
+		
+		}
+		catch(NullPointerException e)
+		{
+			
+			
+			al.setMerchantshippinggroup("");
+			
+		}	 
+			
+		
+		
+		
+        //write to db
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        	
+        	
+            System.out.println("Database connected!");
+            
+            
+            
+            //insert primary Key SKU  to DB, should have used insert for all statement, will combine later
+
+            
+                String query = " insert into AmazonListing (SKU)"
+                        + " values (?)";
+                
+                
+                PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
+                preparedStmt.setString (1, URLEncoder.encode(al.getSku(),"UTF-8"));
+                
+             // execute the preparedstatement
+                preparedStmt.execute();
+                System.out.println("inserted");
+           
+           	
+            
+            // Update DB
+            String query1 = "UPDATE AmazonListing SET ItemName = ?, ItemDescription = ?, ListingID = ?, AmazonPrice = ?, Quantity = ?, ListingOpenDate = ?, "
+            		+ "IsItemMarketPlace = ?, ProductId = ?, ItemNote = ?, ItemCondition = ?, ASIN = ?, "
+            		+ "ShipInternational = ?, ExpeditedShipping = ?, PendingQuantity = ?,"
+            		+ "FulfillmentChannel = ?,MerchantShippingGroup = ?, ProductIdType = ? "
+            		
+            		+ " WHERE SKU = ?";
+              
+            
+            
+            //create the mysql insert preparedstatement
+            
+            PreparedStatement preparedStmt1 = (PreparedStatement) connection.prepareStatement(query1);
+           
+            //insert values to be updated to statement , need to use encoder to make it more secure and to prevent quotation marks to mess up db
+            
+            preparedStmt1.setString(1,URLEncoder.encode(al.getItemname(), "UTF-8"));
+            
+            preparedStmt1.setString(2,URLEncoder.encode(al.getItemdescription(),"UTF-8"));
+            
+            preparedStmt1.setString(3,URLEncoder.encode(al.getListingid(),"UTF-8"));
+            
+            preparedStmt1.setString(4,URLEncoder.encode(al.getAmazonprice(),"UTF-8"));
+            
+            preparedStmt1.setString(5,URLEncoder.encode(al.getQuantity(),"UTF-8"));
+          
+            preparedStmt1.setString(6,URLEncoder.encode(al.getListingopendate(),"UTF-8"));
+            
+            preparedStmt1.setString(7,URLEncoder.encode(al.getIsmarketplace(),"UTF-8"));
+            
+            preparedStmt1.setString(8,URLEncoder.encode(al.getProductid(),"UTF-8"));
+            
+            preparedStmt1.setString(9,URLEncoder.encode(al.getItemnote(),"UTF-8"));
+            
+            preparedStmt1.setString(10,URLEncoder.encode(al.getItemcondition(),"UTF-8"));
+            
+            preparedStmt1.setString(11,URLEncoder.encode(al.getAsin(),"UTF-8"));
+            
+            preparedStmt1.setString(12,URLEncoder.encode(al.getShipinternational(),"UTF-8"));
+            
+            preparedStmt1.setString(13,URLEncoder.encode(al.getExpitidedshipping(),"UTF-8"));
+            
+          
+            
+            preparedStmt1.setString(14,URLEncoder.encode(al.getPendingquantity(),"UTF-8"));
+            
+            preparedStmt1.setString(15,URLEncoder.encode(al.getFuilfillmentchannel(),"UTF-8"));
+            
+            preparedStmt1.setString(16,URLEncoder.encode(al.getMerchantshippinggroup(),"UTF-8"));
+            
+            preparedStmt1.setString(17,URLEncoder.encode(al.getProductidtype(),"UTF-8"));
+            
+            preparedStmt1.setString(18,URLEncoder.encode(al.getSku(),"UTF-8"));
+            
+            
+            
+            System.out.println(preparedStmt1);
+         // execute the preparedstatement
+            preparedStmt1.execute();
+            System.out.println("Updated");
+            
+            
+            
+            //after inserting, close the connection
+            connection.close();
+            
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot connect the database!", e);
+        }
+        
+		
+		
+			    System.out.println("end of line");
+			    
+			}
+			
+			System.out.println(count);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
-        
+        */
         
        
      
@@ -248,456 +754,7 @@ public class GetReportSample {
         
         
         
-        //use DOM to parse XML, write amazon order id, Asin, sku, product name to DB
-        
-        /*try {	
-        	
-        	//Initialize new Obj to add retrieved data to DB each time it is being retreived 
-        	Amazonorders orders = new Amazonorders(sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken, null, sellerDevAuthToken, sellerDevAuthToken, sellerDevAuthToken);
-           
-            //Does not work, input is a string, only takes afile 
-              File inputFile = new File("Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\Orderready.xml");
-        
-            
-            DocumentBuilderFactory dbFactory 
-            
-               = DocumentBuilderFactory.newInstance();
-            
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            
-            org.w3c.dom.Document doc = dBuilder.parse(inputFile);
-            
-            doc.getDocumentElement().normalize();
-            
-            System.out.println("Root element :" 
-               + doc.getDocumentElement().getNodeName());
-            
-            NodeList nList = doc.getElementsByTagName("Order");
-            
-            System.out.println("----------------------------");
-            
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-            	
-               org.w3c.dom.Node nNode = nList.item(temp);
-               
-               System.out.println("\nCurrent Element :" 
-            		   
-                  + nNode.getNodeName());
-               
-               if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-            	   
-            	   System.out.println("im Here");
-            	   
-                 
-                 //**Critical Error, Node can not be cast to type element
-                  Node eElement = (Element) nNode;
-                  
-            	   org.w3c.dom.Node eElement =  nNode;
-                 
-                  
-                  System.out.println("Im inside of an order");
-                  
-                  System.out.println("AmazonOrderId : " 
-                		  
-                     + ((org.w3c.dom.Element) eElement)
-                     
-                     .getElementsByTagName("AmazonOrderID")
-                     .item(0)
-                     .getTextContent());
-                  
-                  
-                  
-             
-                  //set order id to orders obj
-                  orders.setAmazonorderid(
-                		  ((org.w3c.dom.Element) eElement) 
-                     .getElementsByTagName("AmazonOrderID")
-                     .item(0)
-                     .getTextContent());
-                  
-                  
-        
-        
-                  //set Asin to orders 
-                  try{     
-                	  
-                	  
-                     System.out.println("here");
-                     
-                     
-                     
-                 
-                     
-                     
-                      String as = (((org.w3c.dom.Element) eElement) 
-                      .getElementsByTagName("ASIN")
-                      .item(0)
-                      .getTextContent());
-                      
-                      
-                      
-                      orders.setAsin(
-                        		 as);
-                      
-                      
-                      System.out.println(orders.getAsin());
-                      System.out.println("Did u see?");
-                  }
-                  catch(NullPointerException e){
-                      
-                
-                     
-                     	 
-                     	 System.out.println("Canceled Order");
-                     	 
-                     	 orders.setAsin(
-                            		 "");
-                         	 
-                     	 
-                    
-                      
-                      
-                  };
-                  
-                   
-                       
-             
-                    //set sku   
-                   try{
-                  
-                       String sku = (((org.w3c.dom.Element) eElement) 
-                               .getElementsByTagName("SKU")
-                               .item(0)
-                               .getTextContent());
-                       
-                       
-                       orders.setSku(sku);
-                       
-                       
-                   }
-                      
-                      catch (NullPointerException e)
-                       {
-                      	 
-                      	 orders.setSku(
-                             		 "" );
-                          	 
-                      	 
-                       }
-                    
-                       
-                     
-                     
-                     
-                       //set ProductName
-                       
-                       try{
-                     	  
-                       String pr = (((org.w3c.dom.Element) eElement) 
-                               .getElementsByTagName("ProductName")
-                               .item(0)
-                               .getTextContent());
-                       
-                       
-                 	  orders.setProductname(pr);
-                       
-                       
-                       }
-                       catch(NullPointerException e)
-                       {
-                     	
-                                   
-                     
-                     	  
-                     	  orders.setProductname(
-                         		"" );
-                     	  
-                     	  
-                       }
-                       
-                       
-                       
-                       
-                       
-                       //write to db
-                       
-                       String url = "jdbc:mysql://192.168.123.91/Ordertest";
-                       String username = "apsmagento";
-                       String password = "apsca$@!";
-                       
-                       System.out.println("Loading driver...");
-                       try {
-                           Class.forName("com.mysql.jdbc.Driver");
-                           System.out.println("Driver loaded!");
-                       } catch (ClassNotFoundException e) {
-                           throw new IllegalStateException("Cannot find the driver in the classpath!", e);
-                       }
-                       
-                       
-                       
-                       System.out.println("Connecting database...");
-                       
-                       try (Connection connection = DriverManager.getConnection(url, username, password)) {
-                       	
-                       	
-                           System.out.println("Database connected!");
-                           
-                           
-                           
-                           //When first used this program Amazon Order ids are not avaiable, Insert all order ids to db first, for testing purposes, amazon order id already exists.
-             
-                          
-                          
-                           String query = " insert into AmazonOrders (OrderNumbers)"
-                                   + " values (?)";
-                           
-                           
-                           PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
-                           preparedStmt.setString (1, orders.getAmazonorderid());
-                           
-                        // execute the preparedstatement
-                           preparedStmt.execute();
-                           System.out.println("inserted");
-                           
-                           
-                           
-                           
-                           	
-                           
-                           // Update DB
-                           String query = "UPDATE AmazonOrders SET SKU = ?, ASIN = ?, ProductName = ? "
-                           		
-                           		+ " WHERE OrderNumbers = ?";
-                             
-                           
-                           
-                           //create the mysql insert preparedstatement
-                           
-                           PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
-                          
-                           //insert values to be updated to statement 
-                        
-                        
-                           
-                           preparedStmt.setString(1, orders.getSku());
-                           
-                           preparedStmt.setString(2, orders.getAsin());
-                           
-                           preparedStmt.setString(3,orders.getProductname());
-                           
-                           preparedStmt.setString(4,orders.getAmazonorderid());
-                           
-                           System.out.println(preparedStmt);
-                           
-                        // execute the preparedstatement
-                           preparedStmt.execute();
-                           
-                           
-                           
-                           System.out.println("Updated");
-                           
-                           
-                           
-                           //after inserting, close the connection
-                           connection.close();
-                           
-                       } catch (SQLException e) {
-                           throw new IllegalStateException("Cannot connect the database!", e);
-                       }
-                       
-                       
-                       
-                       
-                       
-                       
-                    }
-                 }
-              } catch (Exception e) {
-             	 
-             	 System.out.println("here is the canceled Order");
-             	 
-
-                 e.printStackTrace();
-                 
-                 
-                 
-                 */
-                 
-                 
-              
-        
-        
-        
-        
-
-        
-        
-    /*  //sax parser to parser the outputed xml report
-        
-     //fetch amazon order id and write it to DB
-        
-    	 // Location of the source file
-        String sourceFilePath = "Y:\\Staffs\\Joey\\Developer\\JoeyAdvisor\\order report.txt";
-        
-        
-  	   
-        FileInputStream fileInputStream = null;
-          
-        // Array List to store the excel sheet data
-        ArrayList excelData = new ArrayList();
-        
-        
-      //String array to store SKUs to get price
-        List<String> str = new ArrayList<String>();
-
-          
-        //A more robust importing method for importing excel data to arrays
-        try {
-              
-            // FileInputStream to read the excel file
-            fileInputStream = new FileInputStream(sourceFilePath);
-
-            // Create an excel workbook
-            HSSFWorkbook excelWorkBook = new HSSFWorkbook(fileInputStream);
-              
-            // Retrieve the first sheet of the workbook.
-            HSSFSheet excelSheet = excelWorkBook.getSheetAt(0);
-              
-          
-            // Iterate through the sheet rows and cells. 
-            // Store the retrieved data in an arrayList
-            java.util.Iterator<Row> rows = excelSheet.rowIterator();
-            while (rows.hasNext()) {
-                HSSFRow row = (HSSFRow) rows.next();
-                java.util.Iterator<Cell> cells = row.cellIterator();
-
-                ArrayList cellData = new ArrayList();
-                while (cells.hasNext()) {
-                    HSSFCell cell = (HSSFCell) cells.next();
-                    cellData.add(cell);
-                }
-
-                excelData .add(cellData);
-            }
-              
-
-            for(int i = 0; i<excelData.size();i++)
-            {
-           	 
-           	 
-           	String a = (excelData.get(i).toString().split(",")[0]);
-           	
-           	System.out.println(a.substring(1, a.length()));
-           	
-           	str.add(a.substring(1, a.length()));
-           	 
-            }
-            
-            
-           System.out.println(str.get(0));
-           
-           str.remove(0);
-           
-           System.out.println("the list with id is " + str.get(0));
-           
-           
-           
-           
-           
-            //remove duplicate, should  have used hash to reduce complexity, will optimize later
-            for(int i = 0; i<str.size();i++)
-            {
-         	   
-          	  for(int j = i+1; j< str.size(); j++){
-          		  
-          		  
-          		if(str.get(i) == str.get(j))
-          		{
-          			
-          			str.remove(j);
-          			
-          		}
-          		  
-          		  
-          	  }
-         	   
-         	   System.out.println(str.get(i));
-            }
-            
-
-       
-            
-            
-            
-            
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fileInputStream != null) {
-                try {
-  				fileInputStream.close();
-  			} catch (IOException e) {
-  				// TODO Auto-generated catch block
-  				e.printStackTrace();
-  			}
-            }
-        }
-          
-        //write to db
-        
-        String url = "***";
-        String username = "***";
-        String password = "***";
-        
-        System.out.println("Loading driver...");
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver loaded!");
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find the driver in the classpath!", e);
-        }
-        
-        System.out.println("Connecting database...");
-        
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-        	
-        	
-            System.out.println("Database connected!");
-            
-            
-            
-            
-            //if successful begin to insert into Amazon order# to DB
-           
-            for(int i = 0; i<str.size();i++)
-            {
-            	System.out.println("Imhere");
-            	System.out.println("we are about to insert" +" "+ str.get(i));
-            // the mysql insert statement
-            String query = " insert into AmazonOrders (OrderNumbers)"
-              + " values (?)";
-            
-            
-            //create the mysql insert preparedstatement
-            
-            PreparedStatement preparedStmt = (PreparedStatement) connection.prepareStatement(query);
-            preparedStmt.setString (1, str.get(i));
-            
-         // execute the preparedstatement
-            preparedStmt.execute();
-            System.out.println("inserted");
-            
-            }
-            
-            //after inserting, close the connection
-            connection.close();
-            
-        } catch (SQLException e) {
-            throw new IllegalStateException("Cannot connect the database!", e);
-        }*/
-        
-        
+     
        
         
         
